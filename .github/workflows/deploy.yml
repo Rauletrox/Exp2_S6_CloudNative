@@ -81,8 +81,8 @@ jobs:
             cd "${EC2_APP_DIR}"
 
             if [ -n "${{ secrets.GHCR_PAT }}" ]; then
-              echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
+              echo "${{ secrets.GHCR_PAT }}" | sudo docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
             fi
 
-            docker compose -f docker-compose.ec2.yml pull
-            docker compose -f docker-compose.ec2.yml up -d --remove-orphans
+            sudo docker compose -f docker-compose.ec2.yml pull
+            sudo docker compose -f docker-compose.ec2.yml up -d --remove-orphans
