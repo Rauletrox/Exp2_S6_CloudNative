@@ -75,6 +75,7 @@ jobs:
           port: ${{ secrets.EC2_PORT || 22 }}
           script: |
             set -e
+            EC2_APP_DIR="${{ env.EC2_APP_DIR }}"
             mkdir -p "${EC2_APP_DIR}"
             cd "${EC2_APP_DIR}"
 
