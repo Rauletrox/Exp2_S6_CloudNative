@@ -47,13 +47,13 @@ public class GuiaDespachoController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<GuiaDespachoResponse> actualizar(
-			@PathVariable Long id,
+			@PathVariable("id") Long id,
 			@Valid @RequestBody GuiaDespachoRequest request) {
 		return ResponseEntity.ok(guiaDespachoService.actualizar(id, request));
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+	public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) {
 		guiaDespachoService.eliminar(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -67,13 +67,13 @@ public class GuiaDespachoController {
 
 	@PostMapping(value = "/{id}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<GuiaDespachoResponse> subirArchivo(
-			@PathVariable Long id,
+			@PathVariable("id") Long id,
 			@RequestParam("file") MultipartFile file) {
 		return ResponseEntity.ok(guiaDespachoService.subirArchivo(id, file));
 	}
 
 	@GetMapping("/{id}/download")
-	public ResponseEntity<Resource> descargarArchivo(@PathVariable Long id) {
+	public ResponseEntity<Resource> descargarArchivo(@PathVariable("id") Long id) {
 		GuiaDespachoService.ArchivoDescargado archivo = guiaDespachoService.descargarArchivo(id);
 
 		return ResponseEntity.ok()
