@@ -12,7 +12,7 @@ permissions:
 
 env:
   JAVA_VERSION: "17"
-  EC2_APP_DIR: /opt/gestiondepedidosyguias
+  EC2_APP_DIR: /home/ubuntu/gestiondepedidosyguias
 
 jobs:
   deploy:
@@ -73,10 +73,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
-          envs: EC2_APP_DIR,IMAGE_OWNER
           script: |
             set -e
-            export IMAGE_OWNER="$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
             mkdir -p "${EC2_APP_DIR}"
             cd "${EC2_APP_DIR}"
 
@@ -84,5 +82,5 @@ jobs:
               echo "${{ secrets.GHCR_PAT }}" | sudo /usr/bin/docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
             fi
 
-            sudo -E /usr/bin/docker compose -f docker-compose.ec2.yml pull
-            sudo -E /usr/bin/docker compose -f docker-compose.ec2.yml up -d --remove-orphans
+            sudo /usr/bin/docker compose -f docker-compose.ec2.yml pull
+            sudo /usr/bin/docker compose -f docker-compose.ec2.yml up -d --remove-orphans
