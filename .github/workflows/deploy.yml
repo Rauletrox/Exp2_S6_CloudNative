@@ -84,5 +84,5 @@ jobs:
               echo "${{ secrets.GHCR_PAT }}" | sudo /usr/bin/docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
             fi
 
-            sudo /usr/bin/docker compose -f docker-compose.ec2.yml pull
-            sudo /usr/bin/docker compose -f docker-compose.ec2.yml up -d --remove-orphans
+            sudo -E /usr/bin/docker compose -f docker-compose.ec2.yml pull
+            sudo -E /usr/bin/docker compose -f docker-compose.ec2.yml up -d --remove-orphans
