@@ -26,7 +26,7 @@ services:
       retries: 10
 
   backend:
-    image: ${IMAGE_NAME}
+    image: ${IMAGE_NAME:-ghcr.io/rauletrox/gestiondepedidosyguias:latest}
     container_name: backend_guias
     restart: unless-stopped
 
