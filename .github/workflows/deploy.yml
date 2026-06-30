@@ -12,7 +12,6 @@ permissions:
 
 env:
   JAVA_VERSION: "17"
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/gestiondepedidosyguias
   EC2_APP_DIR: /opt/gestiondepedidosyguias
 
 jobs:
@@ -45,15 +44,17 @@ jobs:
 
       - name: Build Docker image
         run: |
+          IMAGE_OWNER="$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
           docker build \
-            -t ${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            -t ${{ env.IMAGE_NAME }}:latest \
+            -t ghcr.io/${IMAGE_OWNER}/gestiondepedidosyguias:${{ github.sha }} \
+            -t ghcr.io/${IMAGE_OWNER}/gestiondepedidosyguias:latest \
             .
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ env.IMAGE_NAME }}:latest
+          IMAGE_OWNER="$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
+          docker push ghcr.io/${IMAGE_OWNER}/gestiondepedidosyguias:${{ github.sha }}
+          docker push ghcr.io/${IMAGE_OWNER}/gestiondepedidosyguias:latest
 
       - name: Copy EC2 compose file
         uses: appleboy/scp-action@v0.1.7
@@ -72,10 +73,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT || 22 }}
-          envs: IMAGE_NAME,EC2_APP_DIR,IMAGE_OWNER
+          envs: EC2_APP_DIR,IMAGE_OWNER
           script: |
             set -e
-            export IMAGE_OWNER="${{ github.repository_owner }}"
+            export IMAGE_OWNER="$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
             mkdir -p "${EC2_APP_DIR}"
             cd "${EC2_APP_DIR}"
 
