@@ -72,6 +72,17 @@ public class GuiaDespachoController {
 		return ResponseEntity.ok(guiaDespachoService.subirArchivo(id, file));
 	}
 
+	@GetMapping(value = "/{id}/export", produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<Resource> exportarArchivo(@PathVariable("id") Long id) {
+		GuiaDespachoService.ArchivoGenerado archivo = guiaDespachoService.generarArchivo(id);
+
+		return ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(archivo.contentType()))
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						ContentDisposition.attachment().filename(archivo.nombreArchivo()).build().toString())
+				.body(archivo.resource());
+	}
+
 	@GetMapping("/{id}/download")
 	public ResponseEntity<Resource> descargarArchivo(@PathVariable("id") Long id) {
 		GuiaDespachoService.ArchivoDescargado archivo = guiaDespachoService.descargarArchivo(id);

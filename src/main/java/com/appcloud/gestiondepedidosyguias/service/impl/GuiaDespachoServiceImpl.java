@@ -2,6 +2,7 @@ package com.appcloud.gestiondepedidosyguias.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -93,6 +94,17 @@ public class GuiaDespachoServiceImpl implements GuiaDespachoService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public ArchivoGenerado generarArchivo(Long id) {
+		GuiaDespacho guia = obtenerOError(id);
+		String contenido = construirContenidoGuia(guia);
+		byte[] bytes = contenido.getBytes(StandardCharsets.UTF_8);
+		Resource resource = new ByteArrayResource(bytes);
+		String nombreArchivo = "guia-" + guia.getId() + ".txt";
+		return new ArchivoGenerado(resource, nombreArchivo, "text/plain; charset=UTF-8");
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public ArchivoDescargado descargarArchivo(Long id) {
 		GuiaDespacho guia = obtenerOError(id);
 		if (!StringUtils.hasText(guia.getArchivoS3())) {
@@ -128,5 +140,21 @@ public class GuiaDespachoServiceImpl implements GuiaDespachoService {
 		} catch (java.io.IOException ex) {
 			throw new IllegalArgumentException("No fue posible leer el archivo adjunto", ex);
 		}
+	}
+
+	private String construirContenidoGuia(GuiaDespacho guia) {
+		String salto = System.lineSeparator();
+		StringBuilder sb = new StringBuilder();
+		sb.append("GUIA DE DESPACHO").append(salto);
+		sb.append("ID: ").append(guia.getId()).append(salto);
+		sb.append("Numero guia: ").append(guia.getNumeroGuia()).append(salto);
+		sb.append("Transportista: ").append(guia.getTransportista()).append(salto);
+		sb.append("Fecha despacho: ").append(guia.getFechaDespacho()).append(salto);
+		sb.append("Cliente: ").append(guia.getCliente()).append(salto);
+		sb.append("Direccion entrega: ").append(guia.getDireccionEntrega()).append(salto);
+		sb.append("Estado: ").append(guia.getEstado()).append(salto);
+		sb.append("Archivo S3: ").append(StringUtils.hasText(guia.getArchivoS3()) ? guia.getArchivoS3() : "Sin archivo").append(salto);
+		sb.append("Creado en: ").append(guia.getCreatedAt()).append(salto);
+		return sb.toString();
 	}
 }

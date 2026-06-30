@@ -23,7 +23,12 @@ public interface GuiaDespachoService {
 
 	GuiaDespachoResponse subirArchivo(Long id, MultipartFile file);
 
+	ArchivoGenerado generarArchivo(Long id);
+
 	ArchivoDescargado descargarArchivo(Long id);
+
+	record ArchivoGenerado(Resource resource, String nombreArchivo, String contentType) {
+	}
 
 	record ArchivoDescargado(Resource resource, String nombreArchivo, String contentType) {
 	}
